@@ -8,6 +8,7 @@ const changePassword = async (req, res) => {
         const userID = req.id;
 
         const { currentPassword, newPassword, confirmPassword } = req.body;
+        
 
         if (!currentPassword || !newPassword || !confirmPassword) {
             throw new Error("All fields are required.")
@@ -20,6 +21,11 @@ const changePassword = async (req, res) => {
 
         if (newPassword !== confirmPassword) {
             throw new Error("New password and confirm password do not match.")
+        }
+
+        const isSamePassword = await user.comparePassword(newPassword); //function called
+        if(isSamePassword) {
+            throw new Error("Cannot change same password.")
         }
 
         const errorInPasswordValidation = passwordValidation.validate(newPassword).error; //function called
